@@ -41,7 +41,7 @@ def create_dim_table():
          logging.info(f'Adding {filename} to AS region')
          AS_Data=pd.concat([AS_Data,temp_df],axis=0)
  
- for i,df,title in zip(count(),continent,csv_title):
+ for _,df,title in zip(count(),continent,csv_title):
      
      logging.info(f'Removing {csv_name} file that already exsists.')
      csv_name='{name}.csv'.format(name=title)

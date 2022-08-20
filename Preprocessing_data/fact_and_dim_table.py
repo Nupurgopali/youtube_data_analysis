@@ -63,7 +63,7 @@ def creating_Fact_table():
  
  logging.info('Updating and saving continents csv')
  csv_title=['NA_Data','EU_Data','AS_Data']
- for i,df,title in zip(count(),continent,csv_title):
+ for _,df,title in zip(count(),continent,csv_title):
      csv_name='Clean_{name}.csv'.format(name=title)
      os.remove(os.path.join(os.path.relpath(youtube_dir),'Data\Continent\\',csv_name))
      df.to_csv(os.path.join(os.path.relpath(youtube_dir),'Data\Continent\\',csv_name),encoding='gbk',index=False)

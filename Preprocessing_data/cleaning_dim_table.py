@@ -36,7 +36,7 @@ def clean_data():
  continent=[NA_Data,EU_Data,AS_Data]
  
  csv_title=['NA_Data','EU_Data','AS_Data']
- for i,df,title in zip(count(),continent,csv_title):
+ for _,df,title in zip(count(),continent,csv_title):
      logging.info(f'Calling handle_null and clean text func for {title}')
      df=handle_null_and_dup_values(df)
      df=clean_text(df)

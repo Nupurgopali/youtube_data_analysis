@@ -106,7 +106,7 @@ def sending_data_to_snowflake():
  logging.info('sending data to snowflake')
 
  
- for i,df,title in zip(count(),tables,tables_name):
+ for _,df,title in zip(count(),tables,tables_name):
      logging.info(f"Sending {title} to snowflake")
      df_to_snowflake_table(title, 'create_replace',df,ctx)
      logging.info(f'{title} successfully sent!')
