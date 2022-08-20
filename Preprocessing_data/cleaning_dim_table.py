@@ -5,6 +5,24 @@ import re
 from itertools import count
 import logging
 
+"""
+It will get rid of duplicate values in the table
+"""
+def handle_null_and_dup_values(df):
+     df.drop_duplicates(subset='video_id',inplace=True)
+     df=df.reset_index(drop=True)
+     return df
+
+"""
+Remove all the non-alphanumeric characters in the string.
+""" 
+def clean_text(df):
+     df.replace(to_replace=[r"\\t|\\n|\\r", "\t|\n|\r",r' +',r'\.+'], value=["",""," ","."], regex=True, inplace=True)
+     return df
+
+"""
+Perform basic cleaning functions such as removing null,duplicate values, cleaning the string ,etc.
+"""
 def clean_data():
  youtube_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
  logging.basicConfig( filename=os.path.join(os.path.relpath(youtube_dir),'Preprocessing_data\\app.log'),filemode='w',level=logging.INFO,format="%(asctime)s %(message)s")
@@ -16,35 +34,6 @@ def clean_data():
  logging.info('Starting to clean the continent files')
  
  continent=[NA_Data,EU_Data,AS_Data]
- #print(NA_Data.head)
- def handle_null_and_dup_values(df):
-     #print(df.isnull().sum())
-     df.drop_duplicates(subset='video_id',inplace=True)
-     df=df.reset_index(drop=True)
-     return df
- 
- 
- def clean_text(df):
-     df.replace(to_replace=[r"\\t|\\n|\\r", "\t|\n|\r",r' +',r'\.+'], value=["",""," ","."], regex=True, inplace=True)
- 
-     # for row in range(20):
-     #     try:
-     #         df.replace(to_replace=[r"\\t|\\n|\\r", "\t|\n|\r",r' +',r'\.+'], value=["",""," ","."], regex=True, inplace=True)
- 
- 
- 
-     #         #df['title'][row]=str(re.sub(' +',' ',str(df['title'][row]))).replace('\n','').replace('\t','')
-     #         #df['channel_title'][row]=str(re.sub(' +',' ',str(df['channel_title'][row]))).replace('\n','').replace('\t','')
-     #         #df['tags'][row]=str(re.sub(' +',' ',str(df['tags'][row]))).replace('\n','').replace('\t','')
-     #         ##df['description'][row]=str(re.sub(' +',' ',df['description'][row]))
-     #         #df['description'][row]=df['description'][row].replace('\n','') 
-     #         print([row])
-     #     except:
-     #         #print(df['title'][row])
-     #         print('Error at row ',row,' ')
-          
-     return df
- 
  
  csv_title=['NA_Data','EU_Data','AS_Data']
  for i,df,title in zip(count(),continent,csv_title):
@@ -52,7 +41,7 @@ def clean_data():
      df=handle_null_and_dup_values(df)
      df=clean_text(df)
      csv_name='Clean_{name}.csv'.format(name=title)
-     logging.info(f'Checking if the {csv_name} file already exsists,and if so then removing it.')
+     logging.info(f'Removing {csv_name} file that already exsists.')
      if os.path.exists(os.path.join(os.path.relpath(youtube_dir),'Data\Continent\\',csv_name)):
          os.remove(os.path.join(os.path.relpath(youtube_dir),'Data\Continent\\',csv_name))
      logging.info(f'saving the {csv_name} file')

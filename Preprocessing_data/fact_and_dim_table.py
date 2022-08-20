@@ -5,7 +5,26 @@ import random
 import logging
 from itertools import count
 
-#os.chdir('..')
+"""
+Create surrogate key that acts as primary key for the table and as a foreign key while performing joining operations.
+"""
+def generate_surrogate_key(df,lower_limit,upper_limit):
+     df['video_key']=random.sample(range(lower_limit,upper_limit), df.shape[0])
+     return df
+
+"""
+Calculates percentage of video interaction, which provides an overview about the most interacted videos in 
+each region using views,dislikes and likes rates.
+"""
+def video_interaction_percentage(dest_df,source_df,col_name):
+     logging.info(f'Starting processing for col {col_name}')
+     dest_df[col_name]=round((source_df['likes']+source_df['dislikes']+source_df['comment_count'])/source_df['views']*100,2)
+     dest_df[col_name].fillna(0,inplace=True)
+     logging.info(f'Finished processing for col {col_name}')
+
+"""
+Create a fact table.
+"""
 def creating_Fact_table():
  youtube_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
  logging.basicConfig( filename=os.path.join(os.path.relpath(youtube_dir),'Preprocessing_data\\app.log'),
@@ -14,12 +33,8 @@ def creating_Fact_table():
  NA_Data=pd.read_csv(os.path.join(os.path.relpath(youtube_dir),'Data\Continent\Clean_NA_data.csv'),low_memory=False,encoding='gbk')
  AS_Data=pd.read_csv(os.path.join(os.path.relpath(youtube_dir),'Data\Continent\Clean_AS_data.csv'),low_memory=False,encoding='gbk')
  EU_Data=pd.read_csv(os.path.join(os.path.relpath(youtube_dir),'Data\Continent\Clean_EU_data.csv'),low_memory=False,encoding='gbk')
- #print(NA_Data.shape,' ',AS_Data.shape,' ',EU_Data.shape)
  continent=[NA_Data,EU_Data,AS_Data]
  
- def generate_surrogate_key(df,lower_limit,upper_limit):
-     df['video_key']=random.sample(range(lower_limit,upper_limit), df.shape[0])
-     return df
  
  logging.info('Calling generate_surrogate_key func')
  NA_Data=generate_surrogate_key(NA_Data,100000,1000000)
@@ -27,10 +42,6 @@ def creating_Fact_table():
  AS_Data=generate_surrogate_key(AS_Data,10000000,100000000)
  logging.info('Finished executing generate_surrogate_key func')
  
- #print(NA_Data['video_key'].duplicated().any())
- #print(EU_Data['video_key'].duplicated().any())
- #print(AS_Data['video_key'].duplicated().any())
- #print(set(NA_Data['video_key']).intersection(set(AS_Data['video_key'])).intersection(set(EU_Data['video_key'])))
  
  logging.info('Checking if fact_table exists and, if exists then removing it.')
  if os.path.exists(os.path.join(os.path.join(os.path.relpath(youtube_dir),'Data\Continent\fact_table.csv'))):
@@ -38,18 +49,6 @@ def creating_Fact_table():
  
  logging.info('Creating fact_table')
  fact_table=pd.DataFrame()
- 
- def video_interaction_percentage(dest_df,source_df,col_name):
-     if dest_df.shape[0]>0:
-         dest_df[col_name]=[0]*dest_df.shape[0]
-     else:
-         dest_df[col_name]=[0]*source_df.shape[0]
-     logging.info(f'Starting processing for col {col_name}')
-     for i in range(source_df.shape[0]):
-         dest_df[col_name][i]='{:.2f}'.format(((source_df['likes'][i]+source_df['dislikes'][i]+source_df['comment_count'][i])/source_df['views'][i])*100)
-         #print(i,' ','{:.2f}'.format(((source_df['likes'][i]+source_df['dislikes'][i]+source_df['comment_count'][i])/source_df['views'][i])*100))
-     logging.info(f'Finished processing for col {col_name}')
- 
      
  video_interaction_percentage(fact_table,EU_Data, 'eu_video_interaction_rate')
  video_interaction_percentage(fact_table,NA_Data, 'na_video_interaction_rate')
@@ -67,6 +66,5 @@ def creating_Fact_table():
  for i,df,title in zip(count(),continent,csv_title):
      csv_name='Clean_{name}.csv'.format(name=title)
      os.remove(os.path.join(os.path.relpath(youtube_dir),'Data\Continent\\',csv_name))
-     #df.drop(['views','likes','dislikes'],inplace=True,axis=1)
      df.to_csv(os.path.join(os.path.relpath(youtube_dir),'Data\Continent\\',csv_name),encoding='gbk',index=False)
- 
+
