@@ -1,7 +1,7 @@
 # youtube_data_analysis
 ## AIM
-The idea was to create an end-to-end automated data pipeline that can be used for analysis and answer common questions related to youtube data such as what are the most viewed channels among the 3 regions, the most liked and disliked videos, average comments on the videos and many more.
-Technology stack: Python, Snowflake, Prefect
+<p>The idea was to create an end-to-end automated data pipeline that can be used for analysis and answer common questions related to youtube data such as what are the most viewed channels among the 3 regions, the most liked and disliked videos, average comments on the videos and many more.</p>
+<p>Technology stack: Python, Snowflake, Prefect</p>
 
 ## Worflow
 The workflow is divided into 3 main parts ETL(Extract, Load, Transform):
